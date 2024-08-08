@@ -1,59 +1,75 @@
-// features/explore.js
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
-import { useTrail, animated } from "@react-spring/web";
-import "../css/explore.css"; // Adjusted import path
+import Masonry from "react-masonry-css";
+import { useInView } from "react-intersection-observer";
+import "../css/explore.css";
 
 function Explore() {
   const [images, setImages] = useState([]);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const { ref, inView } = useInView({
+    threshold: 1.0,
+  });
+
+  const fetchImages = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get("https://pixabay.com/api/", {
+        params: {
+          key: "45331527-e6d9a717ba3bbbc34048f79b7",
+          q: "nature",
+          image_type: "photo",
+          per_page: 10,
+          page: page,
+        },
+      });
+      setImages((prevImages) => [...prevImages, ...response.data.hits]);
+    } catch (error) {
+      console.error("Error fetching data from Pixabay API", error);
+    }
+    setLoading(false);
+  }, [page]);
 
   useEffect(() => {
-    const fetchImages = async () => {
-      try {
-        const response = await axios.get("https://pixabay.com/api/", {
-          params: {
-            key: "45331527-e6d9a717ba3bbbc34048f79b7",
-            q: "nature",
-            image_type: "photo",
-            per_page: 10,
-          },
-        });
-        setImages(response.data.hits);
-      } catch (error) {
-        console.error("Error fetching data from Pixabay API", error);
-      }
-    };
-
     fetchImages();
-  }, []);
+  }, [fetchImages]);
 
-  const trail = useTrail(images.length, {
-    from: { opacity: 0, transform: "translate3d(0,40px,0)" },
-    to: { opacity: 1, transform: "translate3d(0,0px,0)" },
-  });
+  useEffect(() => {
+    if (inView && !loading) {
+      setPage((prevPage) => prevPage + 1);
+    }
+  }, [inView, loading]);
+
+  const breakpointColumnsObj = {
+    default: 3,
+    1100: 2,
+    700: 1,
+  };
 
   return (
     <div className="container">
       <h1>Explore</h1>
-      <div className="row">
-        {trail.map((animation, index) => (
-          <animated.div
-            style={animation}
-            className="col-md-4"
-            key={images[index].id}
-          >
-            <div className="card mb-4 shadow-sm">
-              <img
-                src={images[index].webformatURL}
-                className="card-img-top"
-                alt={images[index].tags}
-              />
-              <div className="card-body">
-                <p className="card-text">{images[index].tags}</p>
-              </div>
+      <Masonry
+        breakpointCols={breakpointColumnsObj}
+        className="my-masonry-grid"
+        columnClassName="my-masonry-grid_column"
+      >
+        {images.map((image) => (
+          <div key={image.id}>
+            <img
+              src={image.webformatURL}
+              alt={image.tags}
+              className="img-fluid"
+            />
+            <div className="card-body">
+              <p className="card-text">{image.tags}</p>
             </div>
-          </animated.div>
+          </div>
         ))}
+      </Masonry>
+      <div ref={ref} className="loading">
+        {loading && <p>Loading...</p>}
       </div>
     </div>
   );
