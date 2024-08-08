@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import Masonry from "react-masonry-css";
 import { useInView } from "react-intersection-observer";
+import LazyLoad from "react-lazyload";
 import "../css/explore.css";
 
 function Explore() {
@@ -18,7 +19,7 @@ function Explore() {
       const response = await axios.get("https://pixabay.com/api/", {
         params: {
           key: "45331527-e6d9a717ba3bbbc34048f79b7",
-          q: "nature",
+          q: "",
           image_type: "photo",
           per_page: 10,
           page: page,
@@ -56,16 +57,18 @@ function Explore() {
         columnClassName="my-masonry-grid_column"
       >
         {images.map((image) => (
-          <div key={image.id}>
-            <img
-              src={image.webformatURL}
-              alt={image.tags}
-              className="img-fluid"
-            />
-            <div className="card-body">
-              <p className="card-text">{image.tags}</p>
+          <LazyLoad key={image.id} height={200} offset={100} once>
+            <div>
+              <img
+                src={image.webformatURL}
+                alt={image.tags}
+                className="img-fluid"
+              />
+              <div className="card-body">
+                <p className="card-text">{image.tags}</p>
+              </div>
             </div>
-          </div>
+          </LazyLoad>
         ))}
       </Masonry>
       <div ref={ref} className="loading">
