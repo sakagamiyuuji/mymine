@@ -1,0 +1,14 @@
+.sticky-header {
+  margin: 30;
+  background-color: rgb(75, 194, 234);
+  padding: 10px;
+  position: sticky;
+  top: 0;
+  z-index: 1000; /* Agar header tetap di atas elemen lainnya */
+}
+
+p {
+  margin: 20px;
+  padding: 10px;
+  background-color: lightgrey;
+}

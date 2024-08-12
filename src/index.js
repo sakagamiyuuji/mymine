@@ -25,6 +25,14 @@ import reportWebVitals from "./reportWebVitals";
 // const root = ReactDOMClient.createRoot(container);
 // root.render(<TestText />);
 
-const container = document.getElementById("root");
-const root = ReactDOM.createRoot(container);
-root.render(<App />);
+// const container = document.getElementById("root");
+// const root = ReactDOM.createRoot(container);
+// root.render(<App />);
+
+// Create a render function to DOM
+function renderDOM(content, id) {
+  ReactDOM.createRoot(document.getElementById(id)).render(content);
+}
+
+// Show the component on the screen
+renderDOM(<App />, "root");

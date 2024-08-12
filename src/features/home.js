@@ -37,6 +37,8 @@ function Home() {
       <ul>
         {data.map((item) => (
           <li key={item.id}>
+            <p>orang yang upload adalah {item.user}</p>
+            <p>Jumlah yang suka : {item.likes} suka</p>
             <p>{item.tags}</p>
             <img
               src={item.webformatURL}

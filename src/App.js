@@ -1,9 +1,9 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import Home from "./features/home";
-import Explore from "./features/explore";
-import Contact from "./features/contact";
-import About from "./features/about";
+import Home from "./features/Home";
+import Explore from "./features/Explore";
+import Contact from "./features/Contact";
+import About from "./features/About";
 import "./App.css";
 
 function Navigation() {
